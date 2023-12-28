@@ -1,97 +1,121 @@
 <template>
-    <div class="manage">
-        <!-- <h1>DataManage.vue</h1> -->
+    <el-card body-style="padding-bottom: 0;">
 
-        <el-button type="primary" @click="exportToExcel('select')" size="mini">导出选定数据</el-button>
-        <el-button type="primary" @click="exportToExcel('all')" size="mini">导出全部数据</el-button>
+        <div class="manage">
 
-        <el-divider content-position="left">数据列表</el-divider>
+            <el-divider content-position="left">数据操作</el-divider>
 
-        <el-table ref="deviceTable" :data="tableData" highlight-current-row @current-change="handleCurrentChange"
-            style="width: 100%" v-loading="devLoading" height="100%" @selection-change="handleSelectionChange">
-
-            <el-table-column type="selection" width="50">
-            </el-table-column>
-            <el-table-column type="index" label="序号" width="70" show-overflow-tooltip>
-            </el-table-column>
-
-            <el-table-column property="sn_number" label="设备SN编号" width="150" show-overflow-tooltip>
-            </el-table-column>
-
-            <el-table-column property="category" label="设备分类" width="150" show-overflow-tooltip>
-            </el-table-column>
-
-            <el-table-column property="online_status" label="在线状态" width="150" show-overflow-tooltip>
-            </el-table-column>
-
-            <el-table-column property="data" label="数据(mg/L)" width="150" show-overflow-tooltip>
-            </el-table-column>
-
-            <el-table-column property="updated_at" label="检测时间" width="200" show-overflow-tooltip>
-            </el-table-column>
-
-            <el-table-column width="100">
-                <template slot-scope="scopeEdit">
-                    <el-button type="primary" @click="editDevice(scopeEdit.row)" size="mini">编辑数据</el-button>
-                </template>
-            </el-table-column>
-
-            <el-table-column>
-                <template slot-scope="scopeDel">
-                    <el-button type="danger" @click="delDevice(scopeDel.row)" size="mini">删除数据</el-button>
-                </template>
-            </el-table-column>
-
-        </el-table>
-
-        <!--分页-->
-        <template>
-            <el-pagination background layout="prev, pager, next" :total="total" @current-change="handlePage"
-                @prev-click="handlePrevClick">
-            </el-pagination>
-        </template>
-
-        <!-- Form -->
-        <el-dialog title="导出数据" :visible.sync="dialogFormVisible">
-            <el-form :model="excelForm" :rules="formRules">
-                <el-form-item label="导出文件名称：" :label-width="formLabelWidth" prop="excelName">
-                    <el-input v-model="excelForm.excelName" autocomplete="off"></el-input>
-                </el-form-item>
-
-                <el-row :gutter="20">
-                    <el-col :span="12">
-                        <el-form-item label="设置表头颜色：" :label-width="'70%'">
-                            <el-color-picker v-model="excelForm.headerColor"></el-color-picker>
+            <el-row style="border-radius: 5px;">
+                <el-col :span="18">
+                    <el-form :model="searchData" ref="searchData" label-width="15%">
+                        <el-form-item label="设备SN编号：" prop="SNnumber" :rules="[
+                            { required: true, message: 'SN编号为空是查询所有设备', trigger: 'blur' },
+                        ]">
+                            <el-col :span="18">
+                                <el-input v-model="searchData.SNnumber" placeholder="请输入设备SN编号..." clearable></el-input>
+                            </el-col>
+                            <el-col :span="6" style="display: flex;justify-content: center;">
+                                <el-button type="primary" @click="searchDevice(searchData.SNnumber)"
+                                    :loading="false">搜索</el-button>
+                            </el-col>
                         </el-form-item>
-                    </el-col>
-                    <el-col :span="12">
-                        <el-form-item label="设置表格颜色：" :label-width="'70%'">
-                            <el-color-picker v-model="excelForm.bodyColor"></el-color-picker>
-                        </el-form-item>
-                    </el-col>
-                </el-row>
+                    </el-form>
+                </el-col>
+                <el-col :span="6">
+                    <el-button type="primary" @click="exportToExcel('select')" size="middle">导出选定数据</el-button>
+                    <el-button type="primary" @click="exportToExcel('all')" size="middle">导出全部数据</el-button>
+                </el-col>
+            </el-row>
 
-                <el-row :gutter="20">
-                    <el-col :span="12">
-                        <el-form-item label="设置表头字体大小：" :label-width="'70%'" prop="headerFontSize">
-                            <el-input v-model.number="excelForm.headerFontSize" autocomplete="off"></el-input>
-                        </el-form-item>
-                    </el-col>
-                    <el-col :span="12">
-                        <el-form-item label="设置表格字体大小：" :label-width="'70%'" prop="bodyFontSize">
-                            <el-input v-model.number="excelForm.bodyFontSize" autocomplete="off"></el-input>
-                        </el-form-item>
-                    </el-col>
-                </el-row>
+            <el-divider content-position="left">数据列表</el-divider>
 
-            </el-form>
-            <div slot="footer" class="dialog-footer">
-                <el-button @click="dialogFormVisible = false">取 消</el-button>
-                <el-button type="primary" @click="exportData()">确 定</el-button>
-            </div>
-        </el-dialog>
+            <el-table ref="deviceTable" :data="tableData" highlight-current-row @current-change="handleCurrentChange"
+                style="width: 100%" v-loading="devLoading" height="100%" @selection-change="handleSelectionChange">
 
-    </div>
+                <el-table-column type="selection" width="50">
+                </el-table-column>
+                <el-table-column type="index" label="序号" width="70" show-overflow-tooltip>
+                </el-table-column>
+
+                <el-table-column property="sn_number" label="设备SN编号" width="150" show-overflow-tooltip>
+                </el-table-column>
+
+                <el-table-column property="category" label="设备分类" width="150" show-overflow-tooltip>
+                </el-table-column>
+
+                <el-table-column property="online_status" label="在线状态" width="150" show-overflow-tooltip>
+                </el-table-column>
+
+                <el-table-column property="data" label="数据(mg/L)" width="150" show-overflow-tooltip>
+                </el-table-column>
+
+                <el-table-column property="updated_at" label="检测时间" width="200" show-overflow-tooltip>
+                </el-table-column>
+
+                <el-table-column width="100">
+                    <template slot-scope="scopeEdit">
+                        <el-button type="primary" @click="editDevice(scopeEdit.row)" size="mini">编辑数据</el-button>
+                    </template>
+                </el-table-column>
+
+                <el-table-column>
+                    <template slot-scope="scopeDel">
+                        <el-button type="danger" @click="delDevice(scopeDel.row)" size="mini">删除数据</el-button>
+                    </template>
+                </el-table-column>
+
+            </el-table>
+
+            <!--分页-->
+            <template>
+                <el-pagination background layout="prev, pager, next" :total="total" @current-change="handlePage"
+                    @prev-click="handlePrevClick">
+                </el-pagination>
+            </template>
+
+            <!-- Form -->
+            <el-dialog title="导出数据" :visible.sync="dialogFormVisible">
+                <el-form :model="excelForm" :rules="formRules">
+                    <el-form-item label="导出文件名称：" :label-width="formLabelWidth" prop="excelName">
+                        <el-input v-model="excelForm.excelName" autocomplete="off"></el-input>
+                    </el-form-item>
+
+                    <el-row :gutter="20">
+                        <el-col :span="12">
+                            <el-form-item label="设置表头颜色：" :label-width="'70%'">
+                                <el-color-picker v-model="excelForm.headerColor"></el-color-picker>
+                            </el-form-item>
+                        </el-col>
+                        <el-col :span="12">
+                            <el-form-item label="设置表格颜色：" :label-width="'70%'">
+                                <el-color-picker v-model="excelForm.bodyColor"></el-color-picker>
+                            </el-form-item>
+                        </el-col>
+                    </el-row>
+
+                    <el-row :gutter="20">
+                        <el-col :span="12">
+                            <el-form-item label="设置表头字体大小：" :label-width="'70%'" prop="headerFontSize">
+                                <el-input v-model.number="excelForm.headerFontSize" autocomplete="off"></el-input>
+                            </el-form-item>
+                        </el-col>
+                        <el-col :span="12">
+                            <el-form-item label="设置表格字体大小：" :label-width="'70%'" prop="bodyFontSize">
+                                <el-input v-model.number="excelForm.bodyFontSize" autocomplete="off"></el-input>
+                            </el-form-item>
+                        </el-col>
+                    </el-row>
+
+                </el-form>
+                <div slot="footer" class="dialog-footer">
+                    <el-button @click="dialogFormVisible = false">取 消</el-button>
+                    <el-button type="primary" @click="exportData()">确 定</el-button>
+                </div>
+            </el-dialog>
+
+        </div>
+
+    </el-card>
 </template>
 
 <script>
@@ -103,7 +127,10 @@ export default {
     },
     data() {
         return {
-            dialogFormVisible: false,//表格的初始可见开关变量
+            searchData: {// 搜素框输入
+                SNnumber: ''
+            },
+            dialogFormVisible: false,// 表格的初始可见开关变量
             excelForm: {
                 excelName: '',
                 headerColor: '#FFFFFF',
@@ -146,8 +173,8 @@ export default {
                 ],
             },
             exportMethod: 'select',
-            devLoading: false,//设备列表加载状态标志
-            currentRow: null,//当前选中的行
+            devLoading: false,// 设备列表加载状态标志
+            currentRow: null,// 当前选中的行
             devicesData: [{
                 "sn_number": "SN001",
                 "category": "TN",
@@ -297,15 +324,15 @@ export default {
             },
             ],
             tableData: [],
-            total: 0,//当前的总条数，默认是0，获取到数据后将total重新给值为tableData的长度
-            pageSizes: 10,//一页数据的个数
+            total: 0,// 当前的总条数，默认是0，获取到数据后将total重新给值为tableData的长度
+            pageSizes: 10,// 一页数据的个数
             multipleSelection: [],// 存放选中的数据
         };
     },
     methods: {
         changeData(num) {
             var i = 0;
-            this.tableData = [];//清空数组
+            this.tableData = [];// 清空数组
             for ((i = num * 10 - 10); i < num * 10; i++) {
                 if (this.devicesData[i] === undefined) {
                     break;
@@ -315,12 +342,12 @@ export default {
             }
             // console.log(this.tableData)
         },
-        handlePage(num) {//点击页面页码的回调函数,返回的是点击的页码数
+        handlePage(num) {// 点击页面页码的回调函数,返回的是点击的页码数
             // console.log(num)//修改tableData显示的数据
             // this.$refs.deviceTable.doLayout();
             this.changeData(num)
         },
-        handlePrevClick(num) {//点击页面上一页的回调函数,返回的是点击的页码数，这个函数其实是不需要的
+        handlePrevClick(num) {// 点击页面上一页的回调函数,返回的是点击的页码数，这个函数其实是不需要的
             // console.log(num)
             this.changeData(num)
         },
@@ -336,13 +363,13 @@ export default {
         exportToExcel(action) {
             if (action === 'all') {
                 this.exportMethod = 'all'
-                this.dialogFormVisible = true//打开表格样式等的调整框
+                this.dialogFormVisible = true// 打开表格样式等的调整框
             } else {
                 if (this.multipleSelection.length === 0) {
                     this.$message.error('没有数据被选中!');
                 } else {
                     this.exportMethod = 'select'
-                    this.dialogFormVisible = true//打开表格样式等的调整框
+                    this.dialogFormVisible = true// 打开表格样式等的调整框
                     // console.log(this.multipleSelection)
                 }
             }
@@ -403,7 +430,7 @@ export default {
                 column.fill = {
                     type: 'pattern',
                     pattern: 'solid',
-                    fgColor: { argb: this.excelForm.bodyColor.slice(1) } // 黄色背景色
+                    fgColor: { argb: this.excelForm.bodyColor.slice(1) }
                 };
 
                 // 设置边框
@@ -433,7 +460,7 @@ export default {
                 cell.fill = {
                     type: 'pattern',
                     pattern: 'solid',
-                    fgColor: { argb: this.excelForm.headerColor.slice(1) } // 黄色背景色
+                    fgColor: { argb: this.excelForm.headerColor.slice(1) }
                 };
 
                 // 设置边框
