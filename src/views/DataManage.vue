@@ -2,75 +2,86 @@
     <el-card body-style="padding-bottom: 0;">
 
         <div class="manage">
-
             <el-divider content-position="left">数据操作</el-divider>
 
-            <el-row style="border-radius: 5px;">
-                <el-col :span="18">
-                    <el-form :model="searchData" ref="searchData" label-width="15%">
-                        <el-form-item label="设备SN编号：" prop="SNnumber" :rules="[
-                            { required: true, message: 'SN编号为空是查询所有设备', trigger: 'blur' },
-                        ]">
-                            <el-col :span="18">
-                                <el-input v-model="searchData.SNnumber" placeholder="请输入设备SN编号..." clearable></el-input>
-                            </el-col>
-                            <el-col :span="6" style="display: flex;justify-content: center;">
-                                <el-button type="primary" @click="searchDevice(searchData.SNnumber)"
-                                    :loading="false">搜索</el-button>
-                            </el-col>
-                        </el-form-item>
-                    </el-form>
-                </el-col>
-                <el-col :span="6">
-                    <el-button type="primary" @click="exportToExcel('select')" size="middle">导出选定数据</el-button>
-                    <el-button type="primary" @click="exportToExcel('all')" size="middle">导出全部数据</el-button>
-                </el-col>
-            </el-row>
+            <div class="infoConatiner">
+                <el-row style="border-radius: 5px;">
+                    <el-col :span="17">
+                        <el-form :model="searchData" ref="searchData" label-width="15%">
+                            <el-form-item label="设备SN编号：" prop="SNnumber" :rules="[
+                                { required: true, message: 'SN编号为空是查询所有设备', trigger: 'blur' },
+                            ]">
+                                <el-col :span="18">
+                                    <el-input v-model="searchData.SNnumber" placeholder="请输入设备SN编号..." clearable></el-input>
+                                </el-col>
+                                <el-col :span="4" style="display: flex;justify-content: center;">
+                                    <el-button type="primary" @click="searchDevice(searchData.SNnumber)"
+                                        :loading="false">搜索</el-button>
+                                </el-col>
+                            </el-form-item>
+                        </el-form>
+                    </el-col>
+                    <el-col :span="7">
+                        <el-col :span="12">
+                            <el-button type="primary" @click="exportToExcel('select')" size="middle"
+                                style="margin-right: 20px;">导出选定数据</el-button>
+                        </el-col>
+                        <el-col :span="12">
+                            <el-button type="primary" @click="exportToExcel('all')" size="middle">导出全部数据</el-button>
+                        </el-col>
+                    </el-col>
+                </el-row>
 
-            <el-divider content-position="left">数据列表</el-divider>
+            </div>
 
-            <el-table ref="deviceTable" :data="tableData" highlight-current-row @current-change="handleCurrentChange"
-                style="width: 100%" v-loading="devLoading" height="100%" @selection-change="handleSelectionChange">
+            <div class="dataListContainer">
+                <el-divider content-position="left">数据列表</el-divider>
 
-                <el-table-column type="selection" width="50">
-                </el-table-column>
-                <el-table-column type="index" label="序号" width="70" show-overflow-tooltip>
-                </el-table-column>
+                <el-table ref="deviceTable" :data="tableData" highlight-current-row @current-change="handleCurrentChange"
+                    style="width: 100%" v-loading="devLoading" height="100%" @selection-change="handleSelectionChange">
 
-                <el-table-column property="sn_number" label="设备SN编号" width="150" show-overflow-tooltip>
-                </el-table-column>
+                    <el-table-column type="selection" width="50">
+                    </el-table-column>
 
-                <el-table-column property="category" label="设备分类" width="150" show-overflow-tooltip>
-                </el-table-column>
+                    <el-table-column property="index" label="序号" width="70" show-overflow-tooltip>
+                    </el-table-column>
 
-                <el-table-column property="online_status" label="在线状态" width="150" show-overflow-tooltip>
-                </el-table-column>
+                    <el-table-column property="sn_number" label="设备SN编号" width="150" show-overflow-tooltip>
+                    </el-table-column>
 
-                <el-table-column property="data" label="数据(mg/L)" width="150" show-overflow-tooltip>
-                </el-table-column>
+                    <el-table-column property="category" label="设备分类" width="150" show-overflow-tooltip>
+                    </el-table-column>
 
-                <el-table-column property="updated_at" label="检测时间" width="200" show-overflow-tooltip>
-                </el-table-column>
+                    <el-table-column property="data" label="数据(mg/L)" width="150" show-overflow-tooltip>
+                    </el-table-column>
 
-                <el-table-column width="100">
-                    <template slot-scope="scopeEdit">
-                        <el-button type="primary" @click="editDevice(scopeEdit.row)" size="mini">编辑数据</el-button>
-                    </template>
-                </el-table-column>
+                    <el-table-column property="updated_at" label="检测时间" width="230" show-overflow-tooltip>
+                    </el-table-column>
 
-                <el-table-column>
-                    <template slot-scope="scopeDel">
-                        <el-button type="danger" @click="delDevice(scopeDel.row)" size="mini">删除数据</el-button>
-                    </template>
-                </el-table-column>
+                    <el-table-column width="100">
+                        <template slot-scope="scopeEdit">
+                            <el-button type="primary" @click="editDevice(scopeEdit.row)" size="mini"
+                                disabled>编辑数据</el-button>
+                        </template>
+                    </el-table-column>
 
-            </el-table>
+                    <el-table-column>
+                        <template slot-scope="scopeDel">
+                            <el-button type="danger" @click="delDevice(scopeDel.row)" size="mini" disabled>删除数据</el-button>
+                        </template>
+                    </el-table-column>
+
+                </el-table>
+            </div>
+
 
             <!--分页-->
             <template>
-                <el-pagination background layout="prev, pager, next" :total="total" @current-change="handlePage"
-                    @prev-click="handlePrevClick">
-                </el-pagination>
+                <div style="padding: 20px;">
+                    <el-pagination background layout="prev, pager, next" :total="total" @current-change="handlePage"
+                        @prev-click="handlePrevClick">
+                    </el-pagination>
+                </div>
             </template>
 
             <!-- Form -->
@@ -80,20 +91,20 @@
                         <el-input v-model="excelForm.excelName" autocomplete="off"></el-input>
                     </el-form-item>
 
-                    <el-row :gutter="20">
-                        <el-col :span="12">
-                            <el-form-item label="设置表头颜色：" :label-width="'70%'">
+                    <el-row :gutter="24">
+                        <el-col :span="12" style="display: flex;justify-content: center;">
+                            <el-form-item label="设置表头颜色：" :label-width="'100%'">
                                 <el-color-picker v-model="excelForm.headerColor"></el-color-picker>
                             </el-form-item>
                         </el-col>
-                        <el-col :span="12">
-                            <el-form-item label="设置表格颜色：" :label-width="'70%'">
+                        <el-col :span="12" style="display: flex;justify-content: center;">
+                            <el-form-item label="设置表格颜色：" :label-width="'100%'">
                                 <el-color-picker v-model="excelForm.bodyColor"></el-color-picker>
                             </el-form-item>
                         </el-col>
                     </el-row>
 
-                    <el-row :gutter="20">
+                    <el-row :gutter="24">
                         <el-col :span="12">
                             <el-form-item label="设置表头字体大小：" :label-width="'70%'" prop="headerFontSize">
                                 <el-input v-model.number="excelForm.headerFontSize" autocomplete="off"></el-input>
@@ -176,149 +187,149 @@ export default {
             devLoading: false,// 设备列表加载状态标志
             currentRow: null,// 当前选中的行
             devicesData: [{
+                "index": 1,
                 "sn_number": "SN001",
                 "category": "TN",
-                "online_status": "1",
                 "data": "0.11",
                 "updated_at": "2023-12-02 20:49:34",
             },
             {
+                "index": 2,
                 "sn_number": "SN002",
                 "category": "TN",
-                "online_status": "1",
                 "data": "0.11",
                 "updated_at": "2023-12-02 20:49:34",
             },
             {
+                "index": 3,
                 "sn_number": "SN003",
                 "category": "TN",
-                "online_status": "1",
                 "data": "0.11",
                 "updated_at": "2023-12-02 20:49:34",
             },
             {
+                "index": 4,
                 "sn_number": "SN004",
                 "category": "TN",
-                "online_status": "1",
                 "data": "0.11",
                 "updated_at": "2023-12-02 20:49:34",
             },
             {
+                "index": 5,
                 "sn_number": "SN005",
                 "category": "TN",
-                "online_status": "1",
                 "data": "0.11",
                 "updated_at": "2023-12-02 20:49:34",
             },
             {
+                "index": 6,
                 "sn_number": "SN006",
                 "category": "TN",
-                "online_status": "1",
                 "data": "0.11",
                 "updated_at": "2023-12-02 20:49:34",
             },
             {
+                "index": 7,
                 "sn_number": "SN007",
                 "category": "TN",
-                "online_status": "1",
                 "data": "0.11",
                 "updated_at": "2023-12-02 20:49:34",
             },
             {
+                "index": 8,
                 "sn_number": "SN008",
                 "category": "TN",
-                "online_status": "1",
                 "data": "0.11",
                 "updated_at": "2023-12-02 20:49:34",
             },
             {
+                "index": 9,
                 "sn_number": "SN009",
                 "category": "TN",
-                "online_status": "1",
                 "data": "0.11",
                 "updated_at": "2023-12-02 20:49:34",
             },
             {
+                "index": 10,
                 "sn_number": "SN010",
                 "category": "TN",
-                "online_status": "1",
                 "data": "0.11",
                 "updated_at": "2023-12-02 20:49:34",
             },
             {
+                "index": 11,
                 "sn_number": "SN011",
                 "category": "TN",
-                "online_status": "1",
                 "data": "0.11",
                 "updated_at": "2023-12-02 20:49:34",
             },
             {
+                "index": 12,
                 "sn_number": "SN012",
                 "category": "TN",
-                "online_status": "1",
                 "data": "0.11",
                 "updated_at": "2023-12-02 20:49:34",
             },
             {
+                "index": 13,
                 "sn_number": "SN013",
                 "category": "TN",
-                "online_status": "1",
                 "data": "0.11",
                 "updated_at": "2023-12-02 20:49:34",
             },
             {
+                "index": 14,
                 "sn_number": "SN014",
                 "category": "TN",
-                "online_status": "1",
                 "data": "0.11",
                 "updated_at": "2023-12-02 20:49:34",
             },
             {
+                "index": 15,
                 "sn_number": "SN015",
                 "category": "TN",
-                "online_status": "1",
                 "data": "0.11",
                 "updated_at": "2023-12-02 20:49:34",
             },
             {
+                "index": 16,
                 "sn_number": "SN016",
                 "category": "TN",
-                "online_status": "1",
                 "data": "0.11",
                 "updated_at": "2023-12-02 20:49:34",
             },
             {
+                "index": 17,
                 "sn_number": "SN017",
                 "category": "TN",
-                "online_status": "1",
                 "data": "0.11",
                 "updated_at": "2023-12-02 20:49:34",
             },
             {
+                "index": 18,
                 "sn_number": "SN018",
                 "category": "TN",
-                "online_status": "1",
                 "data": "0.11",
                 "updated_at": "2023-12-02 20:49:34",
             },
             {
+                "index": 19,
                 "sn_number": "SN019",
                 "category": "TN",
-                "online_status": "1",
                 "data": "0.11",
                 "updated_at": "2023-12-02 20:49:34",
             },
             {
+                "index": 20,
                 "sn_number": "SN020",
                 "category": "TN",
-                "online_status": "1",
                 "data": "0.11",
                 "updated_at": "2023-12-02 20:49:34",
             },
             {
+                "index": 21,
                 "sn_number": "SN021",
                 "category": "TN",
-                "online_status": "1",
                 "data": "0.11",
                 "updated_at": "2023-12-02 20:49:34",
             },
@@ -375,115 +386,119 @@ export default {
             }
         },
         async exportData() {
-            this.dialogFormVisible = false
-
-            const workbook = new ExcelJS.Workbook();
-            const worksheet = workbook.addWorksheet('Sheet1');
-
-            // 添加表头行
-            const headerRow = worksheet.addRow([
-                '序列号',
-                '设备类别',
-                '在线状态',
-                '检测结果(mg/L)',
-                '检测时间'
-            ]);
-
-            // console.log(this.excelForm.headerColor.slice(1))
-
-            // 添加数据行
-            if (this.exportMethod === 'all') {
-                this.devicesData.forEach(data => {
-                    const rowData = Object.values(data);
-                    worksheet.addRow(rowData);
-                });
+            if (this.excelForm.excelName === '') {
+                this.$message.error('请输入导出文件的名称!');
             } else {
-                this.multipleSelection.forEach(data => {
-                    const rowData = Object.values(data);
-                    worksheet.addRow(rowData);
+                this.dialogFormVisible = false
+
+                const workbook = new ExcelJS.Workbook();
+                const worksheet = workbook.addWorksheet('Sheet1');
+
+                // 添加表头行
+                const headerRow = worksheet.addRow([
+                    '序号',
+                    '序列号',
+                    '设备类别',
+                    '检测结果(mg/L)',
+                    '检测时间'
+                ]);
+                // console.log(this.excelForm.headerColor.slice(1))
+
+                // 添加数据行
+                if (this.exportMethod === 'all') {
+                    this.devicesData.forEach(data => {
+                        const rowData = Object.values(data);
+                        worksheet.addRow(rowData);
+                    });
+                } else {
+                    this.multipleSelection.forEach(data => {
+                        const rowData = Object.values(data);
+                        worksheet.addRow(rowData);
+                    });
+                }
+
+                // 自适应列宽
+                worksheet.columns.forEach((column, index) => {
+                    let maxCellLength = 0;
+
+                    // 遍历列中的每个单元格
+                    column.eachCell({ includeEmpty: true }, cell => {
+                        const cellLength = cell.value ? String(cell.value).length + 10 : 0;
+                        maxCellLength = Math.max(maxCellLength, cellLength);
+                    });
+
+                    // 设置列宽
+                    column.width = maxCellLength < 12 ? 15 : maxCellLength;
+
+                    // 设置字体格式
+                    column.font = {
+                        bold: false,
+                        color: { argb: '000000' }, // 字体颜色为黑色
+                        size: this.excelForm.bodyFontSize,
+                        underline: false, // 添加下划线
+                        italic: false, // 设置为斜体
+                    };
+
+                    // 设置填充
+                    column.fill = {
+                        type: 'pattern',
+                        pattern: 'solid',
+                        fgColor: { argb: this.excelForm.bodyColor.slice(1) }
+                    };
+
+                    // 设置边框
+                    column.border = {
+                        top: { style: 'thin' },
+                        left: { style: 'thin' },
+                        bottom: { style: 'thin' },
+                        right: { style: 'thin' },
+                    };
                 });
+
+                // 表头样式
+                headerRow.eachCell(cell => {
+                    // 设置居中
+                    cell.alignment = { horizontal: 'center', vertical: 'middle' };
+
+                    // 设置字体格式
+                    cell.font = {
+                        bold: true,
+                        color: { argb: '000000' }, // 字体颜色为黑色
+                        size: this.excelForm.headerFontSize,
+                        underline: false, // 添加下划线
+                        italic: false, // 设置为斜体
+                    };
+
+                    // 设置填充
+                    cell.fill = {
+                        type: 'pattern',
+                        pattern: 'solid',
+                        fgColor: { argb: this.excelForm.headerColor.slice(1) }
+                    };
+
+                    // 设置边框
+                    cell.border = {
+                        top: { style: 'thin' },
+                        left: { style: 'thin' },
+                        bottom: { style: 'thin' },
+                        right: { style: 'thin' },
+                    };
+
+                });
+
+                // 生成 Blob
+                const blob = await workbook.xlsx.writeBuffer();
+
+                // 创建下载链接
+                const link = document.createElement('a');
+                link.href = URL.createObjectURL(new Blob([blob]));
+                link.download = this.excelForm.excelName + '.xlsx';
+
+                // 触发下载
+                link.click();
             }
-
-            // 自适应列宽
-            worksheet.columns.forEach((column, index) => {
-                let maxCellLength = 0;
-
-                // 遍历列中的每个单元格
-                column.eachCell({ includeEmpty: true }, cell => {
-                    const cellLength = cell.value ? String(cell.value).length + 10 : 0;
-                    maxCellLength = Math.max(maxCellLength, cellLength);
-                });
-
-                // 设置列宽
-                column.width = maxCellLength < 12 ? 15 : maxCellLength;
-
-                // 设置字体格式
-                column.font = {
-                    bold: false,
-                    color: { argb: '000000' }, // 字体颜色为黑色
-                    size: this.excelForm.bodyFontSize,
-                    underline: false, // 添加下划线
-                    italic: false, // 设置为斜体
-                };
-
-                // 设置填充
-                column.fill = {
-                    type: 'pattern',
-                    pattern: 'solid',
-                    fgColor: { argb: this.excelForm.bodyColor.slice(1) }
-                };
-
-                // 设置边框
-                column.border = {
-                    top: { style: 'thin' },
-                    left: { style: 'thin' },
-                    bottom: { style: 'thin' },
-                    right: { style: 'thin' },
-                };
-            });
-
-            // 表头样式
-            headerRow.eachCell(cell => {
-                // 设置居中
-                cell.alignment = { horizontal: 'center', vertical: 'middle' };
-
-                // 设置字体格式
-                cell.font = {
-                    bold: true,
-                    color: { argb: '000000' }, // 字体颜色为黑色
-                    size: this.excelForm.headerFontSize,
-                    underline: false, // 添加下划线
-                    italic: false, // 设置为斜体
-                };
-
-                // 设置填充
-                cell.fill = {
-                    type: 'pattern',
-                    pattern: 'solid',
-                    fgColor: { argb: this.excelForm.headerColor.slice(1) }
-                };
-
-                // 设置边框
-                cell.border = {
-                    top: { style: 'thin' },
-                    left: { style: 'thin' },
-                    bottom: { style: 'thin' },
-                    right: { style: 'thin' },
-                };
-
-            });
-
-            // 生成 Blob
-            const blob = await workbook.xlsx.writeBuffer();
-
-            // 创建下载链接
-            const link = document.createElement('a');
-            link.href = URL.createObjectURL(new Blob([blob]));
-            link.download = this.excelForm.excelName + '.xlsx';
-
-            // 触发下载
-            link.click();
         },
+
         getColumnWidths(worksheet) {
             const range = XLSX.utils.decode_range(worksheet['!ref']);
             const colWidths = new Array(range.e.c - range.s.c + 1).fill(0);
@@ -522,6 +537,14 @@ export default {
     &:last-child {
         margin-bottom: 0;
     }
+}
+
+.dataListContainer {
+    height: 60vh;
+}
+
+.infoConatiner {
+    height: 5vh;
 }
 
 .el-col {

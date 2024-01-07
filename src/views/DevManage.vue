@@ -201,7 +201,7 @@ export default {
                     console.log('cookie:'.token)
                     // 设置 "Authorization" 头部，包括 JWT 令牌
                     this.$axios.defaults.headers.common['Authorization'] = `Bearer ${token}`;
-                    this.$axios.get(`http://119.91.64.37/PHP/searchDeviceAll.php`).then(function (response) {
+                    this.$axios.get(`PHP/searchDeviceAll.php`).then(function (response) {
                         console.log(response);
                         vm.devices = response.data; // 将获取到的数据赋值给devices属性
                         // 刷新表格
@@ -217,7 +217,7 @@ export default {
                         });
                     });
                 } else {
-                    this.$axios.get(`http://119.91.64.37/PHP/searchDevice.php?sn_device=${this.searchData.SNnumber}`).then(function (response) {
+                    this.$axios.get(`PHP/searchDevice.php?sn_device=${this.searchData.SNnumber}`).then(function (response) {
                         console.log(response);
                         vm.devices = response.data; // 将获取到的数据赋值给devices属性
                         // 刷新表格
@@ -234,7 +234,7 @@ export default {
         addDevice() {
             this.addConfirm = true;//开启确认按钮加载状态
             // 发送表单数据到后端
-            this.$axios.post('http://119.91.64.37/PHP/addDevice.php', JSON.stringify(this.adForm))
+            this.$axios.post('PHP/addDevice.php', JSON.stringify(this.adForm))
                 .then(response => {
                     // 处理成功响应
                     console.log('添加设备成功!', response);
@@ -284,7 +284,7 @@ export default {
                 cancelButtonText: '取消',
                 type: 'warning'
             }).then(() => {
-                this.$axios.delete(`http://119.91.64.37/PHP/delDevice.php?sn_device=${devicex.sn_number}`)
+                this.$axios.delete(`PHP/delDevice.php?sn_device=${devicex.sn_number}`)
                     .then(function (response) {
                         console.log(response);
                         if (response.data.success) {
@@ -345,7 +345,7 @@ export default {
         saveDevice() {
             this.editConfirm = true;
             // 发送表单数据到后端
-            this.$axios.post('http://119.91.64.37/PHP/editDevice.php', JSON.stringify(this.form))
+            this.$axios.post('PHP/editDevice.php', JSON.stringify(this.form))
                 .then(response => {
                     // 处理成功响应
                     console.log('编辑成功!', response);
@@ -397,7 +397,7 @@ export default {
     mounted() {
         setTimeout(() => {
             // 在Vue组件中使用Axios来获取设备列表
-            this.$axios.get('http://119.91.64.37/PHP/searchDeviceAll.php')
+            this.$axios.get('PHP/searchDeviceAll.php')
                 .then((response) => {
                     this.devices = response.data; // 将获取到的数据赋值给devices属性
                     this.devLoading = false; // 隐藏加载状态

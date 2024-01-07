@@ -152,7 +152,7 @@ export default {
         //////////////////////////////////////////////////////////////////地图显示////////////////////////////////////////////////
         async fetchAllData() {
             try {
-                const response = await this.$axios.get('http://119.91.64.37/PHP/getAllData.php');
+                const response = await this.$axios.get('http://39.101.180.14/PHP/getAllData.php');
                 this.positionData = response.data.positionData;
                 this.detectionData = response.data.detectionData;
                 this.chartDataList = response.data.chartDataList;
@@ -259,7 +259,7 @@ export default {
             this.errorInfoTableVisible = true;//显示对话框
         },
         fetchDataFromBackend() {
-            this.$axios.get('http://119.91.64.37/PHP/getHomeData.php')
+            this.$axios.get('http://39.101.180.14/PHP/getAllData.php')
                 .then(response => {
                     this.countData = response.data.countData; // 更新 countData 数据
                     this.tableData = response.data.tableData;
